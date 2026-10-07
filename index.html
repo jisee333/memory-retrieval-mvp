@@ -1,896 +1,864 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Memory Retrieval — Concept MVP</title>
+<title>Remember By — AI Memory Retrieval</title>
 
 <style>
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Inter,Arial,sans-serif;
-  background:#f6f7fb;
-  color:#202124;
+* {
+  box-sizing: border-box;
 }
-header{
-  background:white;
-  border-bottom:1px solid #e5e7eb;
-  padding:22px 6%;
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f8f9fb;
+  color: #202124;
 }
-.header-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:20px;
+
+header {
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 18px 28px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
-h1{margin:0;font-size:25px}
-.badge{
-  font-size:11px;
-  background:#eef2ff;
-  color:#4338ca;
-  padding:5px 9px;
-  border-radius:20px;
-  margin-left:8px;
+
+.header-inner {
+  max-width: 1100px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-.subtitle{
-  margin:7px 0 0;
-  color:#6b7280;
-  font-size:13px;
+
+.logo {
+  font-size: 21px;
+  font-weight: 700;
 }
-nav{
-  display:flex;
-  gap:10px;
+
+.logo span {
+  color: #5f6368;
+  font-weight: 400;
 }
-nav button{
-  border:0;
-  background:transparent;
-  padding:10px 14px;
-  border-radius:9px;
-  cursor:pointer;
-  font-weight:600;
+
+.container {
+  max-width: 1100px;
+  margin: 30px auto;
+  padding: 0 20px 50px;
 }
-nav button.active{
-  background:#111827;
-  color:white;
+
+h1 {
+  margin-bottom: 8px;
 }
-main{
-  max-width:1100px;
-  margin:35px auto;
-  padding:0 22px;
+
+.subtitle {
+  color: #5f6368;
+  margin-top: 0;
+  line-height: 1.5;
 }
-.screen-title{
-  margin-bottom:7px;
-  font-size:24px;
+
+.panel {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 24px;
+  margin-top: 22px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
-.screen-description{
-  color:#6b7280;
-  margin-top:0;
-  margin-bottom:25px;
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-top: 20px;
 }
-.photo-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:15px;
+
+.photo {
+  position: relative;
+  height: 180px;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 3px solid transparent;
+  background: #eee;
 }
-.photo{
-  background:white;
-  border:3px solid transparent;
-  border-radius:14px;
-  overflow:hidden;
-  cursor:pointer;
-  box-shadow:0 2px 8px rgba(0,0,0,.05);
-  transition:.15s;
+
+.photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
-.photo:hover{transform:translateY(-2px)}
-.photo.selected{
-  border-color:#4f46e5;
+
+.photo.selected {
+  border-color: #1a73e8;
 }
-.photo img{
-  width:100%;
-  height:175px;
-  object-fit:cover;
-  display:block;
+
+.photo-label {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  background: rgba(0,0,0,0.65);
+  color: white;
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-size: 12px;
 }
-.photo-info{
-  padding:11px;
+
+.check {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  background: #1a73e8;
+  color: white;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
 }
-.photo-name{
-  font-weight:650;
-  font-size:14px;
+
+.photo.selected .check {
+  display: flex;
 }
-.photo-tag{
-  font-size:11px;
-  color:#6b7280;
-  margin-top:4px;
+
+button {
+  border: none;
+  border-radius: 22px;
+  padding: 11px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 8px;
 }
-.selection-bar{
-  position:fixed;
-  bottom:25px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#111827;
-  color:white;
-  padding:13px 18px;
-  border-radius:14px;
-  box-shadow:0 10px 35px rgba(0,0,0,.2);
-  display:flex;
-  align-items:center;
-  gap:18px;
-  z-index:10;
+
+.primary {
+  background: #1a73e8;
+  color: white;
 }
-.primary{
-  border:0;
-  background:#4f46e5;
-  color:white;
-  padding:11px 17px;
-  border-radius:9px;
-  font-weight:650;
-  cursor:pointer;
+
+.secondary {
+  background: #eef3f8;
+  color: #1a73e8;
 }
-.secondary{
-  border:1px solid #d1d5db;
-  background:white;
-  color:#111827;
-  padding:10px 16px;
-  border-radius:9px;
-  cursor:pointer;
-  font-weight:600;
+
+.danger {
+  background: #fce8e6;
+  color: #c5221f;
 }
-.danger{
-  border:0;
-  background:transparent;
-  color:#dc2626;
-  padding:10px 16px;
-  cursor:pointer;
-  font-weight:600;
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
-.card{
-  background:white;
-  border:1px solid #e5e7eb;
-  border-radius:18px;
-  padding:28px;
-  box-shadow:0 5px 20px rgba(0,0,0,.05);
-  max-width:650px;
-  margin:auto;
+
+.actions {
+  margin-top: 22px;
 }
-.ai-label{
-  display:inline-flex;
-  align-items:center;
-  gap:7px;
-  background:#f3f0ff;
-  color:#5b21b6;
-  padding:7px 11px;
-  border-radius:20px;
-  font-size:12px;
-  font-weight:700;
+
+.ai-card {
+  border: 2px solid #d2e3fc;
+  background: #f8fbff;
+  border-radius: 15px;
+  padding: 24px;
 }
-.suggestion-title{
-  font-size:29px;
-  margin:18px 0 6px;
+
+.ai-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 18px;
 }
-.category{
-  color:#6b7280;
-  margin-bottom:20px;
+
+.suggestion {
+  font-size: 27px;
+  font-weight: 700;
+  margin: 8px 0 15px;
 }
-.explanation{
-  background:#f9fafb;
-  padding:15px;
-  border-radius:11px;
-  color:#4b5563;
-  line-height:1.55;
+
+.meta {
+  display: inline-block;
+  background: #e8f0fe;
+  color: #174ea6;
+  border-radius: 15px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
 }
-.confidence{
-  display:inline-block;
-  margin-top:15px;
-  font-size:12px;
-  color:#047857;
-  background:#ecfdf5;
-  padding:6px 9px;
-  border-radius:8px;
+
+.explanation {
+  margin: 20px 0;
+  line-height: 1.55;
+  color: #4d5156;
 }
-.actions{
-  display:flex;
-  gap:10px;
-  margin-top:24px;
+
+.confidence {
+  font-weight: 600;
+  margin-bottom: 20px;
 }
-.edit-input{
-  width:100%;
-  font-size:25px;
-  padding:10px;
-  border:2px solid #6366f1;
-  border-radius:9px;
+
+.success {
+  background: #e6f4ea;
+  border: 1px solid #b7dfbf;
+  padding: 18px;
+  border-radius: 12px;
+  margin-bottom: 20px;
 }
-.album-photos{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
-  margin-top:20px;
+
+.search-box {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
 }
-.album-photos img{
-  width:100%;
-  height:130px;
-  object-fit:cover;
-  border-radius:10px;
+
+.search-box input {
+  flex: 1;
+  padding: 13px 15px;
+  border: 1px solid #dadce0;
+  border-radius: 24px;
+  font-size: 16px;
 }
-.success{
-  color:#047857;
-  background:#ecfdf5;
-  padding:12px;
-  border-radius:10px;
-  margin-bottom:20px;
+
+.memory-card {
+  margin-top: 22px;
+  border: 1px solid #dadce0;
+  border-radius: 15px;
+  padding: 18px;
 }
-.search-box{
-  display:flex;
-  gap:10px;
-  max-width:700px;
+
+.memory-title {
+  font-size: 21px;
+  font-weight: 700;
 }
-.search-box input{
-  flex:1;
-  padding:14px;
-  border:1px solid #d1d5db;
-  border-radius:10px;
-  font-size:16px;
+
+.memory-info {
+  color: #5f6368;
+  margin-top: 6px;
 }
-.memory-result{
-  margin-top:25px;
+
+.small {
+  font-size: 13px;
+  color: #6b7280;
 }
-.empty{
-  text-align:center;
-  padding:60px 20px;
-  color:#6b7280;
+
+.hidden {
+  display: none;
 }
-.loading{
-  text-align:center;
-  padding:60px;
+
+.step {
+  font-size: 13px;
+  color: #5f6368;
+  margin-bottom: 10px;
+  font-weight: 600;
 }
-@media(max-width:800px){
-  .photo-grid{grid-template-columns:repeat(2,1fr)}
-  .album-photos{grid-template-columns:repeat(2,1fr)}
-  .header-row{flex-direction:column;align-items:flex-start}
+
+@media (max-width: 800px) {
+  .photo-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .photo-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
+
 </head>
 
 <body>
 
 <header>
-  <div class="header-row">
-    <div>
-      <h1>Memory Retrieval <span class="badge">Concept MVP</span></h1>
-      <p class="subtitle">
-        Prototype for testing memory-based photo retrieval. Not affiliated with Google Photos.
-      </p>
-    </div>
-
-    <nav>
-      <button id="libraryNav" class="active" onclick="showScreen('library')">Library</button>
-      <button id="memoryNav" onclick="showScreen('search')">Find a Memory</button>
-    </nav>
+  <div class="header-inner">
+    <div class="logo">Remember By <span>· AI Memory Retrieval</span></div>
+    <button class="secondary" onclick="showMemories()">My Memories</button>
   </div>
 </header>
 
-<main>
+<div class="container">
 
-<!-- LIBRARY -->
-<section id="libraryScreen">
+  <section id="librarySection">
+    <h1>Photo Library</h1>
+    <p class="subtitle">
+      Select photos from a memory you may want to find again later.
+      You don't need to remember the exact date.
+    </p>
 
-  <h2 class="screen-title">Your Photo Library</h2>
-  <p class="screen-description">
-    Select photos from a memory you may want to retrieve later without remembering the date.
-  </p>
+```
+<div class="panel">
+  <div class="step">STEP 1 · SELECT PHOTOS</div>
 
   <div class="photo-grid" id="photoGrid"></div>
 
-  <div id="selectionBar" class="selection-bar" style="display:none">
-    <span id="selectedCount">0 photos selected</span>
-    <button class="primary" onclick="analyzeMemory()">✨ Organize for easier retrieval</button>
+  <div class="actions">
+    <button class="primary" id="organizeBtn" onclick="organizePhotos()" disabled>
+      Organize for easier retrieval
+    </button>
+    <span id="selectedText" class="small">0 photos selected</span>
+  </div>
+</div>
+```
+
+  </section>
+
+  <section id="suggestionSection" class="panel hidden">
+
+```
+<div class="step">STEP 2 · AI CONTEXTUAL SUGGESTION</div>
+
+<div class="ai-card">
+
+  <div class="ai-title">✨ AI MEMORY SUGGESTION</div>
+
+  <div class="suggestion" id="suggestionName">
+    Mysore Trip
   </div>
 
-</section>
-
-
-<!-- AI SUGGESTION -->
-<section id="suggestScreen" style="display:none">
-
-  <div class="card">
-
-    <div class="ai-label">✨ AI MEMORY SUGGESTION</div>
-
-    <div id="suggestionContent"></div>
-
-    <div class="actions">
-      <button class="primary" onclick="saveMemory()">Save Memory</button>
-      <button class="secondary" onclick="editMemory()">Edit</button>
-      <button class="danger" onclick="skipMemory()">Skip</button>
-    </div>
-
+  <div class="meta" id="suggestionCategory">
+    📍 Place
   </div>
 
-</section>
-
-
-<!-- ALBUM -->
-<section id="albumScreen" style="display:none">
-
-  <div class="card">
-
-    <div class="success">
-      ✓ Memory saved. You can now retrieve these photos using the context you remember.
-    </div>
-
-    <div id="albumContent"></div>
-
-    <div class="actions">
-      <button class="primary" onclick="showScreen('search')">🔎 Find a Memory</button>
-      <button class="secondary" onclick="showScreen('library')">Back to Library</button>
-    </div>
-
+  <div class="explanation" id="suggestionExplanation">
+    The selected photos appear to share contextual signals associated
+    with a trip to Mysore. This creates a persistent retrieval path
+    around the place you are likely to remember.
   </div>
 
-</section>
+  <div class="confidence" id="confidence">
+    AI confidence: High
+  </div>
 
-
-<!-- SEARCH -->
-<section id="searchScreen" style="display:none">
-
-  <h2 class="screen-title">Find a Memory</h2>
-
-  <p class="screen-description">
-    What do you remember about the photos? You don't need to remember the date.
+  <p class="small">
+    You remain in control. Review, edit or skip the suggestion before saving.
   </p>
 
-  <div class="search-box">
-    <input id="searchInput"
-           placeholder="e.g. Mysore, wedding, college..."
-           onkeydown="if(event.key==='Enter') findMemory()">
-    <button class="primary" onclick="findMemory()">Find Photos</button>
+  <div class="actions">
+    <button class="primary" onclick="saveMemory()">Save Memory</button>
+    <button class="secondary" onclick="editMemory()">Edit</button>
+    <button class="danger" onclick="skipMemory()">Skip</button>
   </div>
 
-  <div id="searchResults"></div>
+</div>
+```
 
-</section>
+  </section>
 
-</main>
+  <section id="memorySection" class="panel hidden">
 
+```
+<div class="step">STEP 3 · MEMORY CREATED</div>
+
+<div class="success">
+  <strong>✓ Memory saved successfully</strong>
+  <div class="small">
+    This memory can now be used as a retrieval path without remembering the date.
+  </div>
+</div>
+
+<div class="memory-card">
+  <div class="memory-title" id="savedMemoryName">Mysore Trip</div>
+  <div class="memory-info">
+    Category: <span id="savedMemoryCategory">Place</span>
+  </div>
+  <div class="memory-info">
+    Photos: <span id="savedMemoryCount">0</span>
+  </div>
+</div>
+
+<div class="actions">
+  <button class="primary" onclick="showSearch()">🔎 Find a Memory</button>
+  <button class="secondary" onclick="startOver()">Back to Photos</button>
+</div>
+```
+
+  </section>
+
+  <section id="searchSection" class="panel hidden">
+
+```
+<div class="step">STEP 4 · RETRIEVE USING MEMORY</div>
+
+<h2>🔎 Find a Memory</h2>
+
+<p class="subtitle">
+  What do you remember about the photos?
+</p>
+
+<div class="search-box">
+  <input
+    type="text"
+    id="memorySearch"
+    placeholder="e.g. Mysore, wedding, college"
+    onkeydown="if(event.key === 'Enter') searchMemory()"
+  >
+  <button class="primary" onclick="searchMemory()">Find Photos</button>
+</div>
+
+<div id="searchResult"></div>
+```
+
+  </section>
+
+  <section id="memoriesSection" class="panel hidden">
+
+```
+<div class="step">SAVED RETRIEVAL PATHS</div>
+
+<h2>My Memories</h2>
+
+<div id="memoriesList"></div>
+
+<div class="actions">
+  <button class="secondary" onclick="startOver()">Back to Photos</button>
+</div>
+```
+
+  </section>
+
+</div>
 
 <script>
 
-/* -------------------------------
-   DEMO PHOTO DATA
--------------------------------- */
-
 const photos = [
-
- {
-  id:1,
-  name:"Mysore Palace",
-  tags:["Mysore","Trip","Palace"],
-  image:"https://images.unsplash.com/photo-1596727147202-311400276632?auto=format&fit=crop&w=800&q=80"
- },
- {
-  id:2,
-  name:"Brindavan Gardens",
-  tags:["Mysore","Gardens"],
-  image:"https://images.unsplash.com/photo-1590050838119-21b8b8243681?auto=format&fit=crop&w=800&q=80"
- },
- {
-  id:3,
-  name:"Family at Palace",
-  tags:["Mysore","Family"],
-  image:"https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=800&q=80"
- },
- {
-  id:4,
-  name:"Mysore Street",
-  tags:["Mysore","Street"],
-  image:"https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=800&q=80"
- },
- {
-  id:5,
-  name:"Hotel",
-  tags:["Mysore","Hotel"],
-  image:"https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80"
- },
-
- {
-  id:6,
-  name:"Goa Beach",
-  tags:["Goa","Trip","Beach"],
-  image:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80"
- },
- {
-  id:7,
-  name:"Goa Resort",
-  tags:["Goa","Resort"],
-  image:"https://images.unsplash.com/photo-1512343879784-a960bc40e70a?auto=format&fit=crop&w=800&q=80"
- },
- {
-  id:8,
-  name:"Cousin Wedding",
-  tags:["Wedding","Family","Ceremony"],
-  image:"https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80"
- },
- {
-  id:9,
-  name:"College Campus",
-  tags:["College","Event"],
-  image:"https://images.unsplash.com/photo-1564981797816-1043664bf78d?auto=format&fit=crop&w=800&q=80"
- },
- {
-  id:10,
-  name:"College Friends",
-  tags:["College","Event","Friends"],
-  image:"https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80"
- },
- {
-  id:11,
-  name:"Wedding Reception",
-  tags:["Wedding","Reception","Family"],
-  image:"https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80"
- },
- {
-  id:12,
-  name:"Family Celebration",
-  tags:["Family","Occasion","Celebration"],
-  image:"https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80"
- }
-
+  {
+    id: 1,
+    memory: "Mysore",
+    label: "Mysore Palace",
+    image: "https://images.unsplash.com/photo-1595658658481-d53d3f999875?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    id: 2,
+    memory: "Mysore",
+    label: "Mysore Trip",
+    image: "https://images.unsplash.com/photo-1603262110263-fb0112e7cc33?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    id: 3,
+    memory: "Mysore",
+    label: "Trip",
+    image: "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    id: 4,
+    memory: "Mysore",
+    label: "Travel",
+    image: "https://images.unsplash.com/photo-1470214304380-aadaedcfff1b?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    id: 5,
+    memory: "Mysore",
+    label: "Memory",
+    image: "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    id: 6,
+    memory: "Goa",
+    label: "Goa Trip",
+    image: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    id: 7,
+    memory: "Goa",
+    label: "Beach",
+    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    id: 8,
+    memory: "Wedding",
+    label: "Wedding",
+    image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    id: 9,
+    memory: "Wedding",
+    label: "Celebration",
+    image: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    id: 10,
+    memory: "College",
+    label: "College Event",
+    image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    id: 11,
+    memory: "Family",
+    label: "Family Occasion",
+    image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    id: 12,
+    memory: "Family",
+    label: "Family Memory",
+    image: "https://images.unsplash.com/photo-1504159506876-4c757a390844?auto=format&fit=crop&w=800&q=80"
+  }
 ];
 
-let selectedIds = [];
-let currentSuggestion = null;
-let editing = false;
+let selected = [];
+let memories = JSON.parse(localStorage.getItem("rememberByMemories") || "[]");
 
+function renderPhotos() {
 
-/* -------------------------------
-   LOAD LIBRARY
--------------------------------- */
+  const grid = document.getElementById("photoGrid");
 
-function renderPhotos(){
+  grid.innerHTML = photos.map(photo => `
+    <div class="photo ${selected.includes(photo.id) ? "selected" : ""}"
+         onclick="togglePhoto(${photo.id})">
 
- const grid = document.getElementById("photoGrid");
+      <img src="${photo.image}" alt="${photo.label}">
 
- grid.innerHTML = photos.map(photo => `
+      <div class="check">✓</div>
 
-   <div class="photo ${selectedIds.includes(photo.id) ? 'selected' : ''}"
-        onclick="togglePhoto(${photo.id})">
+      <div class="photo-label">${photo.label}</div>
 
-      <img src="${photo.image}" alt="${photo.name}">
+    </div>
+  `).join("");
 
-      <div class="photo-info">
-        <div class="photo-name">${photo.name}</div>
-        <div class="photo-tag">${photo.tags.join(" · ")}</div>
+  updateSelection();
+}
+
+function togglePhoto(id) {
+
+  if (selected.includes(id)) {
+    selected = selected.filter(x => x !== id);
+  } else {
+    selected.push(id);
+  }
+
+  renderPhotos();
+}
+
+function updateSelection() {
+
+  const count = selected.length;
+
+  document.getElementById("selectedText").textContent =
+    `${count} photo${count === 1 ? "" : "s"} selected`;
+
+  document.getElementById("organizeBtn").disabled = count === 0;
+}
+
+function inferMemory() {
+
+  const selectedPhotos = photos.filter(p => selected.includes(p.id));
+
+  if (selectedPhotos.length === 0) {
+    return null;
+  }
+
+  const counts = {};
+
+  selectedPhotos.forEach(photo => {
+    counts[photo.memory] = (counts[photo.memory] || 0) + 1;
+  });
+
+  const topMemory = Object.keys(counts).sort(
+    (a, b) => counts[b] - counts[a]
+  )[0];
+
+  const ratio = counts[topMemory] / selectedPhotos.length;
+
+  if (topMemory === "Mysore" && ratio >= 0.5) {
+
+    return {
+      name: "Mysore Trip",
+      category: "📍 Place",
+      explanation:
+        "The selected photos share contextual signals associated with a trip to Mysore. This creates a persistent retrieval path around the place you are likely to remember.",
+      confidence: "High",
+      key: "Mysore"
+    };
+
+  }
+
+  if (topMemory === "Goa" && ratio >= 0.5) {
+
+    return {
+      name: "Goa Trip",
+      category: "📍 Place",
+      explanation:
+        "The selected photos share contextual signals associated with a Goa trip. The AI groups the context into a memorable retrieval label.",
+      confidence: "High",
+      key: "Goa"
+    };
+
+  }
+
+  if (topMemory === "Wedding" && ratio >= 0.5) {
+
+    return {
+      name: "Wedding",
+      category: "🎉 Occasion",
+      explanation:
+        "The selected photos share contextual signals associated with a wedding occasion.",
+      confidence: "High",
+      key: "Wedding"
+    };
+
+  }
+
+  if (topMemory === "College" && ratio >= 0.5) {
+
+    return {
+      name: "College Event",
+      category: "🎓 Event",
+      explanation:
+        "The selected photos share contextual signals associated with a college event.",
+      confidence: "High",
+      key: "College"
+    };
+
+  }
+
+  if (topMemory === "Family" && ratio >= 0.5) {
+
+    return {
+      name: "Family Occasion",
+      category: "👨‍👩‍👧 Occasion",
+      explanation:
+        "The selected photos share contextual signals associated with a family occasion.",
+      confidence: "High",
+      key: "Family"
+    };
+
+  }
+
+  return {
+    name: "Shared Memory",
+    category: "🗂️ Memory",
+    explanation:
+      "The selected photos share contextual signals, but there is not enough evidence for a more specific memory label.",
+    confidence: "Low",
+    key: "Shared"
+  };
+}
+
+function organizePhotos() {
+
+  const result = inferMemory();
+
+  if (!result) return;
+
+  document.getElementById("suggestionName").textContent = result.name;
+  document.getElementById("suggestionCategory").textContent = result.category;
+  document.getElementById("suggestionExplanation").textContent = result.explanation;
+  document.getElementById("confidence").textContent =
+    `AI confidence: ${result.confidence}`;
+
+  document.getElementById("suggestionSection").classList.remove("hidden");
+
+  window.currentSuggestion = result;
+
+  document.getElementById("suggestionSection").scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
+function saveMemory() {
+
+  const suggestion = window.currentSuggestion;
+
+  if (!suggestion) return;
+
+  const memory = {
+    id: Date.now(),
+    name: suggestion.name,
+    category: suggestion.category,
+    key: suggestion.key,
+    photoIds: [...selected]
+  };
+
+  memories.push(memory);
+
+  localStorage.setItem(
+    "rememberByMemories",
+    JSON.stringify(memories)
+  );
+
+  document.getElementById("savedMemoryName").textContent =
+    memory.name;
+
+  document.getElementById("savedMemoryCategory").textContent =
+    memory.category;
+
+  document.getElementById("savedMemoryCount").textContent =
+    memory.photoIds.length;
+
+  document.getElementById("memorySection").classList.remove("hidden");
+
+  document.getElementById("memorySection").scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
+function editMemory() {
+
+  const suggestion = window.currentSuggestion;
+
+  if (!suggestion) return;
+
+  const newName = prompt(
+    "Edit the memory name:",
+    suggestion.name
+  );
+
+  if (newName && newName.trim()) {
+
+    suggestion.name = newName.trim();
+
+    document.getElementById("suggestionName").textContent =
+      suggestion.name;
+  }
+}
+
+function skipMemory() {
+
+  document.getElementById("suggestionSection").classList.add("hidden");
+
+  alert(
+    "Suggestion skipped. Your photos were not saved as a memory."
+  );
+}
+
+function showSearch() {
+
+  hideAllSections();
+
+  document.getElementById("searchSection").classList.remove("hidden");
+
+  document.getElementById("memorySearch").focus();
+}
+
+function searchMemory() {
+
+  const query = document
+    .getElementById("memorySearch")
+    .value
+    .trim()
+    .toLowerCase();
+
+  const result = document.getElementById("searchResult");
+
+  if (!query) {
+    result.innerHTML =
+      `<p class="small">Enter a memory clue such as Mysore or wedding.</p>`;
+    return;
+  }
+
+  const matches = memories.filter(memory =>
+    memory.name.toLowerCase().includes(query) ||
+    memory.key.toLowerCase().includes(query) ||
+    memory.category.toLowerCase().includes(query)
+  );
+
+  if (matches.length === 0) {
+
+    result.innerHTML = `
+      <div class="memory-card">
+        <strong>No saved memory found.</strong>
+        <p class="small">
+          Try a clue such as Mysore, Goa, wedding or college.
+        </p>
+      </div>
+    `;
+
+    return;
+  }
+
+  result.innerHTML = matches.map(memory => {
+
+    const memoryPhotos = photos.filter(photo =>
+      memory.photoIds.includes(photo.id)
+    );
+
+    return `
+      <div class="memory-card">
+
+        <div class="memory-title">${memory.name}</div>
+
+        <div class="memory-info">
+          ${memory.category} · ${memoryPhotos.length} photos
+        </div>
+
+        <p class="small">
+          Retrieved using your memory cue — no date required.
+        </p>
+
+        <div class="photo-grid">
+          ${memoryPhotos.map(photo => `
+            <div class="photo">
+              <img src="${photo.image}" alt="${photo.label}">
+              <div class="photo-label">${photo.label}</div>
+            </div>
+          `).join("")}
+        </div>
+
+      </div>
+    `;
+
+  }).join("");
+}
+
+function showMemories() {
+
+  hideAllSections();
+
+  document.getElementById("memoriesSection").classList.remove("hidden");
+
+  const list = document.getElementById("memoriesList");
+
+  if (memories.length === 0) {
+
+    list.innerHTML =
+      `<p class="small">No memories saved yet.</p>`;
+
+    return;
+  }
+
+  list.innerHTML = memories.map(memory => `
+
+    <div class="memory-card">
+
+      <div class="memory-title">${memory.name}</div>
+
+      <div class="memory-info">
+        ${memory.category} · ${memory.photoIds.length} photos
       </div>
 
-   </div>
+    </div>
 
- `).join("");
-
- updateSelection();
-
+  `).join("");
 }
 
-function togglePhoto(id){
+function hideAllSections() {
 
- if(selectedIds.includes(id)){
-   selectedIds = selectedIds.filter(x => x !== id);
- }else{
-   selectedIds.push(id);
- }
-
- renderPhotos();
+  document.getElementById("librarySection").classList.add("hidden");
+  document.getElementById("suggestionSection").classList.add("hidden");
+  document.getElementById("memorySection").classList.add("hidden");
+  document.getElementById("searchSection").classList.add("hidden");
+  document.getElementById("memoriesSection").classList.add("hidden");
 }
 
-function updateSelection(){
+function startOver() {
 
- const bar = document.getElementById("selectionBar");
+  hideAllSections();
 
- if(selectedIds.length === 0){
-   bar.style.display="none";
-   return;
- }
+  document.getElementById("librarySection").classList.remove("hidden");
 
- bar.style.display="flex";
+  selected = [];
 
- document.getElementById("selectedCount").textContent =
-   selectedIds.length + (selectedIds.length === 1 ? " photo selected" : " photos selected");
+  renderPhotos();
 
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
 }
-
-
-/* -------------------------------
-   CONTEXTUAL AI INFERENCE
--------------------------------- */
-
-/*
- This prototype demonstrates the AI decision point:
- photo/context clues → meaningful memory suggestion.
-
- The inference layer is intentionally local so the prototype
- can be deployed as a static GitHub Pages site without exposing
- an API key.
-*/
-
-function inferMemory(selected){
-
- const tagCounts = {};
-
- selected.forEach(photo => {
-   photo.tags.forEach(tag => {
-     tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-   });
- });
-
- const candidates = Object.entries(tagCounts)
-   .filter(([tag,count]) => count >= 2)
-   .sort((a,b) => b[1]-a[1]);
-
- const top = candidates.length ? candidates[0][0] : null;
-
- if(top === "Mysore"){
-   return {
-     title:"Mysore Trip",
-     category:"Place",
-     explanation:"The selected photos contain repeated contextual clues associated with Mysore, including a palace, gardens, streets and family travel moments.",
-     confidence:"High"
-   };
- }
-
- if(top === "Goa"){
-   return {
-     title:"Goa Trip",
-     category:"Place",
-     explanation:"The selected photos contain repeated Goa-related travel and resort clues, indicating a shared trip memory.",
-     confidence:"High"
-   };
- }
-
- if(top === "Wedding"){
-   return {
-     title:"Wedding",
-     category:"Event",
-     explanation:"The selected photos contain repeated wedding-related clues such as ceremony, reception and family moments.",
-     confidence:"High"
-   };
- }
-
- if(top === "College"){
-   return {
-     title:"College Event",
-     category:"Event",
-     explanation:"The selected photos contain repeated college and event-related clues, suggesting a shared college memory.",
-     confidence:"High"
-   };
- }
-
- if(top === "Family"){
-   return {
-     title:"Family Occasion",
-     category:"Occasion",
-     explanation:"The selected photos contain repeated family and celebration clues.",
-     confidence:"Medium"
-   };
- }
-
- return {
-   title:"Shared Memory",
-   category:"Occasion",
-   explanation:"The selected photos share contextual signals, but there is not enough evidence for a more specific memory label.",
-   confidence:"Low"
- };
-
-}
-
-
-/* -------------------------------
-   ANALYZE
--------------------------------- */
-
-function analyzeMemory(){
-
- if(selectedIds.length === 0) return;
-
- const selected = photos.filter(p => selectedIds.includes(p.id));
-
- currentSuggestion = inferMemory(selected);
-
- currentSuggestion.photos = selected.map(p => p.id);
-
- editing = false;
-
- renderSuggestion();
-
- showScreen("suggest");
-
-}
-
-
-/* -------------------------------
-   SUGGESTION SCREEN
--------------------------------- */
-
-function renderSuggestion(){
-
- const s = currentSuggestion;
-
- document.getElementById("suggestionContent").innerHTML = `
-
-   <div id="titleArea">
-
-     ${
-       editing
-
-       ?
-
-       `<input id="editTitle"
-               class="edit-input"
-               value="${s.title}">`
-
-       :
-
-       `<div class="suggestion-title">📍 ${s.title}</div>`
-     }
-
-   </div>
-
-   <div class="category">
-     Category: <strong>${s.category}</strong>
-   </div>
-
-   <div class="explanation">
-     <strong>Why this suggestion?</strong><br><br>
-     ${s.explanation}
-   </div>
-
-   <div class="confidence">
-     AI confidence: ${s.confidence}
-   </div>
-
-   <p style="color:#6b7280;font-size:13px;margin-top:20px">
-     You remain in control. Review, edit or skip the suggestion before saving.
-   </p>
-
- `;
-
-}
-
-
-function editMemory(){
-
- if(!editing){
-   editing = true;
-   renderSuggestion();
-   return;
- }
-
- const input = document.getElementById("editTitle");
-
- if(input && input.value.trim()){
-   currentSuggestion.title = input.value.trim();
- }
-
- editing = false;
- renderSuggestion();
-
-}
-
-
-/* -------------------------------
-   SAVE MEMORY
--------------------------------- */
-
-function saveMemory(){
-
- if(editing){
-
-   const input = document.getElementById("editTitle");
-
-   if(input && input.value.trim()){
-     currentSuggestion.title = input.value.trim();
-   }
-
-   editing = false;
- }
-
- const existing =
-   JSON.parse(localStorage.getItem("memoryAlbums") || "[]");
-
- const memory = {
-   id:Date.now(),
-   title:currentSuggestion.title,
-   category:currentSuggestion.category,
-   explanation:currentSuggestion.explanation,
-   confidence:currentSuggestion.confidence,
-   photos:currentSuggestion.photos
- };
-
- existing.push(memory);
-
- localStorage.setItem("memoryAlbums",JSON.stringify(existing));
-
- renderAlbum(memory);
-
- showScreen("album");
-
-}
-
-
-/* -------------------------------
-   ALBUM
--------------------------------- */
-
-function renderAlbum(memory){
-
- const albumPhotos =
-   photos.filter(p => memory.photos.includes(p.id));
-
- document.getElementById("albumContent").innerHTML = `
-
-   <h2 style="font-size:28px;margin-top:0">
-     📍 ${memory.title}
-   </h2>
-
-   <p style="color:#6b7280">
-     ${memory.category} · Saved memory
-   </p>
-
-   <p style="line-height:1.5">
-     This memory creates a persistent retrieval path based on
-     contextual information rather than the photo date.
-   </p>
-
-   <div class="album-photos">
-
-     ${albumPhotos.map(p => `
-       <img src="${p.image}" alt="${p.name}">
-     `).join("")}
-
-   </div>
-
- `;
-
-}
-
-
-/* -------------------------------
-   SKIP
--------------------------------- */
-
-function skipMemory(){
-
- currentSuggestion = null;
- selectedIds = [];
-
- renderPhotos();
-
- showScreen("library");
-
-}
-
-
-/* -------------------------------
-   RETRIEVAL
--------------------------------- */
-
-function findMemory(){
-
- const query =
-   document.getElementById("searchInput").value.trim().toLowerCase();
-
- const memories =
-   JSON.parse(localStorage.getItem("memoryAlbums") || "[]");
-
- if(!query){
-
-   document.getElementById("searchResults").innerHTML = `
-     <div class="empty">
-       Enter a clue such as <strong>Mysore</strong>, wedding or college.
-     </div>
-   `;
-
-   return;
- }
-
- const matches = memories.filter(memory => {
-
-   const text = (
-     memory.title + " " +
-     memory.category + " " +
-     memory.explanation
-   ).toLowerCase();
-
-   return text.includes(query);
-
- });
-
- if(matches.length === 0){
-
-   document.getElementById("searchResults").innerHTML = `
-     <div class="empty">
-       <h3>No saved memory found</h3>
-       <p>Try a different memory clue.</p>
-     </div>
-   `;
-
-   return;
-
- }
-
- document.getElementById("searchResults").innerHTML =
-
- matches.map(memory => {
-
-   const albumPhotos =
-     photos.filter(p => memory.photos.includes(p.id));
-
-   return `
-
-     <div class="card memory-result">
-
-       <div class="success">
-         ✓ Retrieved using your memory cue — no date required.
-       </div>
-
-       <h2 style="font-size:25px">
-         📍 ${memory.title}
-       </h2>
-
-       <p style="color:#6b7280">
-         ${memory.category}
-       </p>
-
-       <p>
-         ${memory.explanation}
-       </p>
-
-       <div class="album-photos">
-
-         ${albumPhotos.map(p => `
-           <img src="${p.image}" alt="${p.name}">
-         `).join("")}
-
-       </div>
-
-     </div>
-
-   `;
-
- }).join("");
-
-}
-
-
-/* -------------------------------
-   NAVIGATION
--------------------------------- */
-
-function showScreen(screen){
-
- document.getElementById("libraryScreen").style.display =
-   screen==="library" ? "block" : "none";
-
- document.getElementById("suggestScreen").style.display =
-   screen==="suggest" ? "block" : "none";
-
- document.getElementById("albumScreen").style.display =
-   screen==="album" ? "block" : "none";
-
- document.getElementById("searchScreen").style.display =
-   screen==="search" ? "block" : "none";
-
- document.getElementById("libraryNav").className =
-   screen==="library" ? "active" : "";
-
- document.getElementById("memoryNav").className =
-   screen==="search" ? "active" : "";
-
- window.scrollTo(0,0);
-
-}
-
-
-/* INITIALIZE */
 
 renderPhotos();
 
